@@ -8,6 +8,5 @@ export namespace LightClasses {
         classList.toggle("light-blink", light === "blink")
         classList.toggle("light-flash", light === "flash")
         classList.toggle("pressed", key.pressed)
-        classList.toggle("highlight", key.highlighted)
     }
 }

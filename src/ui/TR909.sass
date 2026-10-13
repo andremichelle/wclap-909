@@ -1,16 +1,10 @@
 @use "sass:color"
 @use "@/ui/vars" as *
 
-@keyframes fading
-  0%
-    opacity: 0.7
-  100%
-    opacity: 1.0
-
 component
   --scale: 1
-  width: 1226px
-  height: 728px
+  width: 1164px
+  height: 626px
   position: relative
   image-rendering: pixelated
   background: radial-gradient(at 50% 0, rgba(white, 0.25), transparent), linear-gradient(to bottom, color.adjust($COLOR_CHASSIS, $lightness: -4%), color.adjust($COLOR_CHASSIS, $lightness: -8%))
@@ -38,49 +32,13 @@ component
   > .logo
     background-repeat: no-repeat
 
-    &.roland
-      top: 36px
-      left: 88px
-      width: 204px
-      height: 30px
-      background-image: url("@/ui/assets/roland.svg")
-
-    &.tr-909
-      top: 190px
-      left: 88px
-      width: 270px
+    &.wc-909
+      top: 54px
+      left: 66px
+      width: 285px
       height: 35px
       background-size: contain
-      background-image: url("@/ui/assets/tr-909.svg")
-
-    &.rhythm-composer
-      top: 210px
-      left: 790px
-      width: 332px
-      height: 15px
-      background-image: url("@/ui/assets/rhythm-composer.svg")
-
-  > .tutorial-advance
-    top: 10%
-    left: 50%
-    display: flex
-    align-items: center
-    flex-direction: column
-    color: $COLOR_HIGHLIGHT
-    transform: translate(-50%, 0)
-    animation: fading 250ms ease-in infinite alternate
-    cursor: pointer
-    z-index: 2
-
-    > svg
-      fill: $COLOR_HIGHLIGHT
-      width: 32px
-      height: 32px
-
-    > p
-      margin: 8px 0 0 0
-      padding: 0
-      font-size: 12px
+      background-image: url("@/ui/assets/wc-909.svg")
 
   > hr
     margin: 0

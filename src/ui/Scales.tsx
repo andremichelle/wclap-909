@@ -2,7 +2,7 @@ import css from "./Scales.sass?inline"
 import {Lifecycle, ObservableValue} from "@opendaw/lib-std"
 import {Html} from "@opendaw/lib-dom"
 import {createElement} from "@opendaw/lib-jsx"
-import {ScaleIndex} from "@/audio/memory"
+import {ScaleIndex} from "@/audio/pattern"
 
 const className = Html.adoptStyleSheet(css, "Scales")
 

@@ -1,5 +1,5 @@
 import css from "./Knob.sass?inline"
-import {Lifecycle, Optional, Parameter, Terminator} from "@opendaw/lib-std"
+import {Exec, Lifecycle, Optional, Parameter, Terminator} from "@opendaw/lib-std"
 import {Events, Html} from "@opendaw/lib-dom"
 import {createElement} from "@opendaw/lib-jsx"
 
@@ -12,9 +12,11 @@ type Construct = {
     big?: boolean
     units?: [string, string]
     style?: Partial<CSSStyleDeclaration>
+    onGestureBegin?: Exec
+    onGestureEnd?: Exec
 }
 
-export const Knob = ({lifecycle, parameter, label, big, units, style}: Construct) => {
+export const Knob = ({lifecycle, parameter, label, big, units, style, onGestureBegin, onGestureEnd}: Construct) => {
     const element: HTMLDivElement = (
         <div className={Html.buildClassList(className, big === true && "big")} data-label={label} style={style}>
             <div className="knob"/>
@@ -31,7 +33,9 @@ export const Knob = ({lifecycle, parameter, label, big, units, style}: Construct
             const startPointer = event.clientY
             dragging?.terminate()
             const terminator = new Terminator()
+            onGestureBegin?.()
             terminator.ownAll(
+                {terminate: () => onGestureEnd?.()},
                 Events.subscribe(element, "pointermove", (moveEvent: PointerEvent) =>
                     parameter.setUnitValue(startValue - (moveEvent.clientY - startPointer) * 0.01)),
                 Events.subscribe(element, "pointerup", () => terminator.terminate()),

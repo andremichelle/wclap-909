@@ -2,8 +2,8 @@ import css from "./MainKeys.sass?inline"
 import {Arrays, Lifecycle} from "@opendaw/lib-std"
 import {Html} from "@opendaw/lib-dom"
 import {createElement} from "@opendaw/lib-jsx"
+import {STEPS_PER_PAGE} from "@/audio/pattern"
 import {UIContext} from "@/control/context"
-import {MainKeyIndex} from "@/control/keys"
 import {HardButton} from "./HardButton"
 import {Labeled} from "./Labeled"
 
@@ -15,24 +15,24 @@ type Construct = {
     style?: Partial<CSSStyleDeclaration>
 }
 
-export const MainKey = ({lifecycle, ui, index}: { lifecycle: Lifecycle, ui: UIContext, index: MainKeyIndex }) => (
-    <HardButton lifecycle={lifecycle}
-                kind="switch"
-                model={ui.mainKeys.byIndex(index)}
-                onPress={() => ui.pressMainKey(index)}
-                onRelease={() => ui.releaseMainKey(index)}/>
-)
-
 export const MainKeys = ({lifecycle, ui, style}: Construct) => {
+    const labels: Array<HTMLElement> = []
     const pairs = Arrays.create(pair => (
         <div className="two">
-            {[pair * 2, pair * 2 + 1].map(index => (
+            {[pair * 2, pair * 2 + 1].map(index => labels[index] = (
                 <Labeled label={String(index + 1)}>
-                    <MainKey lifecycle={lifecycle} ui={ui} index={index}/>
+                    <HardButton lifecycle={lifecycle}
+                                kind="switch"
+                                model={ui.stepKeys.byIndex(index)}
+                                onPress={event => ui.pressStepKey(index, event.shiftKey)}
+                                onRelease={() => ui.releaseStepKey(index)}/>
                 </Labeled>
             ))}
         </div>
     ), 8)
+    // the step numbers of the edit range
+    lifecycle.own(ui.editPage.catchupAndSubscribe(owner => labels.forEach((label, index) =>
+        label.dataset.label = String(owner.getValue() * STEPS_PER_PAGE + index + 1))))
     return (
         <div className={className} style={style}>
             {pairs.flatMap((pair, index) => index === 0 ? [pair] : [<hr/>, pair])}

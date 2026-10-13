@@ -1,134 +1,117 @@
 import css from "./TR909.sass?inline"
-import {Exec, Lifecycle, ObservableValue} from "@opendaw/lib-std"
-import {Events, Html} from "@opendaw/lib-dom"
+import {Arrays, Exec, int, Lifecycle, Terminable} from "@opendaw/lib-std"
+import {Html} from "@opendaw/lib-dom"
 import {createElement} from "@opendaw/lib-jsx"
 import {UIContext} from "@/control/context"
-import {FunctionKeyIndex, MainKeyIndex} from "@/control/keys"
 import {ActionGroup} from "./ActionGroup"
 import {FunctionKey} from "./FunctionKey"
-import {HardButton} from "./HardButton"
 import {Instruments} from "./Instruments"
-import {FunctionKeyLabels, TriggerKeyLabels} from "./KeyLabels"
 import {Knob} from "./Knob"
-import {Labeled} from "./Labeled"
 import {LedDisplay} from "./LedDisplay"
-import {MainKey, MainKeys} from "./MainKeys"
+import {MainKeys} from "./MainKeys"
 import {PatternFunctions} from "./PatternFunctions"
 import {Scales} from "./Scales"
 
 const className = Html.adoptStyleSheet(css, "TR909")
+
+// Runs once on press, then repeatedly while held
+class Repeat implements Terminable {
+    #timeout: ReturnType<typeof setTimeout> | undefined = undefined
+
+    constructor(readonly exec: Exec) {}
+
+    start(): void {
+        this.stop()
+        this.exec()
+        const next = (delay: number) => this.#timeout = setTimeout(() => {
+            this.exec()
+            next(80)
+        }, delay)
+        next(400)
+    }
+
+    stop(): void {
+        clearTimeout(this.#timeout)
+        this.#timeout = undefined
+    }
+
+    terminate(): void {this.stop()}
+}
 
 const at = (x: number, y: number): Partial<CSSStyleDeclaration> => ({transform: `translate(${x}px, ${y}px)`})
 
 type Construct = {
     lifecycle: Lifecycle
     ui: UIContext
-    tutorialAdvanceVisible: ObservableValue<boolean>
-    onTutorialAdvance: Exec
 }
 
-export const TR909 = ({lifecycle, ui, tutorialAdvanceVisible, onTutorialAdvance}: Construct) => {
-    const preset = ui.machine.preset
-    const key = (index: FunctionKeyIndex) => <FunctionKey lifecycle={lifecycle} ui={ui} index={index}/>
-    const tutorialAdvance: HTMLDivElement = (
-        <div className="tutorial-advance">
-            <svg viewBox="0 0 512 512">
-                <path
-                    d="M256 0C114.615 0 0 114.615 0 256s114.615 256 256 256 256-114.616 256-256S397.385 0 256 0zm90.899 280.959-85.594 85.594c-13.783 13.784-36.132 13.784-49.917 0-13.784-13.784-13.784-36.133 0-49.917L272.023 256l-60.635-60.635c-13.784-13.784-13.784-36.133 0-49.917s36.134-13.784 49.917 0l85.594 85.594c13.784 13.783 13.784 36.133 0 49.917z"/>
-            </svg>
-            <p>Click here to continue...</p>
-        </div>
-    )
+export const TR909 = ({lifecycle, ui}: Construct) => {
+    const {preset} = ui
+    const patternKeys = Arrays.create(index => (
+        <FunctionKey lifecycle={lifecycle} model={ui.patternKeys.byIndex(index)}
+                     title={`Pattern ${index + 1}`}
+                     onPress={() => ui.selectPattern(index)}/>
+    ), ui.patternKeys.keys.length)
+    const lengthKey = (index: int, delta: int, title: string) => {
+        const repeat = new Repeat(() => ui.changeLength(delta))
+        lifecycle.own(repeat)
+        return (
+            <FunctionKey lifecycle={lifecycle} model={ui.lengthKeys.byIndex(index)} title={title}
+                         onPress={() => {
+                             ui.lengthKeys.byIndex(index).setPressed(true)
+                             repeat.start()
+                         }}
+                         onRelease={() => {
+                             ui.lengthKeys.byIndex(index).setPressed(false)
+                             repeat.stop()
+                         }}/>
+        )
+    }
+    const pageKeys = Arrays.create(index => (
+        <FunctionKey lifecycle={lifecycle} model={ui.pageKeys.byIndex(index)}
+                     title={`Edit steps ${index * 16 + 1}-${index * 16 + 16}`}
+                     onPress={() => ui.selectPage(index)}/>
+    ), ui.pageKeys.keys.length)
     const element: HTMLDivElement = (
         <div className={className}>
-            {tutorialAdvance}
-            <div className="logo roland"/>
-            <div className="logo tr-909"/>
-            <div className="logo rhythm-composer"/>
-            <Instruments lifecycle={lifecycle} preset={preset} style={at(90, 244)}/>
-            <ActionGroup columns={4} style={at(496, 406)}>
-                <h1 style={{gridColumn: "1 / 5"}}>TRACK PLAY</h1>
-                {key(FunctionKeyIndex.Track1)}
-                {key(FunctionKeyIndex.Track2)}
-                {key(FunctionKeyIndex.Track3)}
-                {key(FunctionKeyIndex.Track4)}
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <h2 style={{gridColumn: "1 / 5"}}>TRACK WRITE</h2>
+            <div className="logo wc-909"/>
+            <Instruments lifecycle={lifecycle} ui={ui} style={at(66, 108)}/>
+            <div style={at(66, 316)}>
+                <LedDisplay lifecycle={lifecycle} value={ui.length}/>
+            </div>
+            <ActionGroup columns={2} style={at(179, 308)}>
+                <h1 style={{gridColumn: "1 / 3"}}>LENGTH</h1>
+                {lengthKey(0, -1, "Shortens the pattern by one step (hold to repeat)")}
+                {lengthKey(1, 1, "Lengthens the pattern by one step (hold to repeat)")}
+                <span>−</span>
+                <span>+</span>
             </ActionGroup>
-            <ActionGroup columns={4} style={at(630, 406)}>
-                <h1 style={{gridColumn: "1 / 4"}}>PATTERN PLAY</h1>
-                <div/>
-                {key(FunctionKeyIndex.PatternGroup1)}
-                {key(FunctionKeyIndex.PatternGroup2)}
-                {key(FunctionKeyIndex.PatternGroup3)}
-                {key(FunctionKeyIndex.EmptyExtInst)}
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span/>
-                <h2 style={{gridColumn: "1 / 4"}}>PATTERN WRITE</h2>
-                <h2>EXT INST</h2>
+            <ActionGroup columns={4} style={at(297, 308)}>
+                <h1 style={{gridColumn: "1 / 5"}}>EDIT STEPS</h1>
+                {pageKeys}
+                {pageKeys.map((_, index) => <span>{index * 16 + 1}-{index * 16 + 16}</span>)}
             </ActionGroup>
-            <ActionGroup columns={6} style={at(768, 406)}>
-                <h1>TEMPO</h1>
-                <h1>BACK</h1>
-                <h1>FWD</h1>
-                <h1>AVAILABLE MEAS</h1>
-                <h1>CYCLE /GUIDE</h1>
-                <h1>TAPE SYNC</h1>
-                {key(FunctionKeyIndex.TempoStep)}
-                {key(FunctionKeyIndex.BackTap)}
-                {key(FunctionKeyIndex.ForwardBankI)}
-                {key(FunctionKeyIndex.AvailableMeasuresBankII)}
-                {key(FunctionKeyIndex.CycleGuideLastMeasure)}
-                {key(FunctionKeyIndex.TapeSyncTempoMode)}
-                <span>STEP</span>
-                <span>TAP</span>
-                <span>I</span>
-                <span>II</span>
-                <span/>
-                <span/>
-                <h2 style={{gridColumn: "1 / 3"}}>PATTERN WRITE MODE</h2>
-                <h2 style={{gridColumn: "3 / 5"}}>BANK</h2>
-                <h2>LAST MEAS</h2>
-                <h2>TEMP MODE</h2>
+            <ActionGroup columns={8} style={at(477, 308)}>
+                <h1 style={{gridColumn: "1 / 9"}}>PATTERN</h1>
+                {patternKeys}
+                {patternKeys.map((_, index) => <span>{index + 1}</span>)}
             </ActionGroup>
-            <PatternFunctions lifecycle={lifecycle} ui={ui} style={at(90, 498)}/>
-            <Scales lifecycle={lifecycle} scaleIndex={ui.scaleIndex} style={at(198, 498)}/>
-            <MainKeys lifecycle={lifecycle} ui={ui} style={at(212, 582)}/>
-            <FunctionKeyLabels style={at(206, 638)}/>
-            <TriggerKeyLabels style={at(206, 656)}/>
-            <hr className="bottom-right" style={at(1120, 498)}/>
-            <hr className="main-border" style={{...at(230, 564), width: "354px"}}/>
-            <hr className="main-border" style={{...at(688, 564), width: "408px"}}/>
-            <Knob lifecycle={lifecycle} parameter={preset.tempo} label="TEMPO" big units={["SLOW", "FAST"]}
-                  style={at(390, 400)}/>
+            <PatternFunctions lifecycle={lifecycle} ui={ui} style={at(66, 396)}/>
+            <Scales lifecycle={lifecycle} scaleIndex={ui.scaleIndex} style={at(174, 396)}/>
+            <MainKeys lifecycle={lifecycle} ui={ui} style={at(188, 480)}/>
+            <hr className="bottom-right" style={at(1096, 396)}/>
+            <hr className="main-border" style={{...at(206, 462), width: "354px"}}/>
+            <hr className="main-border" style={{...at(664, 462), width: "408px"}}/>
             <Knob lifecycle={lifecycle} parameter={preset.volume} label="VOLUME" big units={["MIN", "MAX"]}
-                  style={at(1038, 400)}/>
-            <Labeled label="MEAS/TEMPO" style={at(268, 423)}>
-                <LedDisplay lifecycle={lifecycle} value={ui.display.value}/>
-            </Labeled>
-            <Labeled label="START" style={at(128, 423)}>
-                <HardButton lifecycle={lifecycle} kind="trigger" bright highlighted={ui.startKeyHighlighted}
-                            onPress={() => ui.pressStart()}/>
-            </Labeled>
-            <Labeled label="STOP/CONT" style={at(192, 423)}>
-                <HardButton lifecycle={lifecycle} kind="trigger" bright onPress={() => ui.pressStopContinue()}/>
-            </Labeled>
-            <Labeled label={"CARTRIDGE\n/ENTER"} below="TOTAL ACCENT" style={at(962, 423)}>
-                <MainKey lifecycle={lifecycle} ui={ui} index={MainKeyIndex.CartridgeEnterTotalAccent}/>
-            </Labeled>
+                  onGestureBegin={() => ui.beginGesture(preset.volume)}
+                  onGestureEnd={() => ui.endGesture(preset.volume)}
+                  style={at(1014, 292)}/>
             <footer/>
         </div>
     )
     lifecycle.ownAll(
         ui.blinkPhase.catchupAndSubscribe(owner => element.classList.toggle("blink-phase", owner.getValue())),
-        ui.flashPhase.catchupAndSubscribe(owner => element.classList.toggle("flash-phase", owner.getValue())),
-        tutorialAdvanceVisible.catchupAndSubscribe(owner => tutorialAdvance.classList.toggle("hidden", !owner.getValue())),
-        Events.subscribe(tutorialAdvance, "pointerdown", () => onTutorialAdvance())
+        ui.flashPhase.catchupAndSubscribe(owner => element.classList.toggle("flash-phase", owner.getValue()))
     )
     return element
 }

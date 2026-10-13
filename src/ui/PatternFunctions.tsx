@@ -14,22 +14,23 @@ type Construct = {
     style?: Partial<CSSStyleDeclaration>
 }
 
+const Titles: Record<FunctionKeyIndex, string> = {
+    [FunctionKeyIndex.Scale]: "Cycles the scale of the pattern",
+    [FunctionKeyIndex.Clear]: "Clears the selected instrument in the pattern"
+}
+
 export const PatternFunctions = ({lifecycle, ui, style}: Construct) => {
-    const key = (index: FunctionKeyIndex) => <FunctionKey lifecycle={lifecycle} ui={ui} index={index}/>
+    const key = (index: FunctionKeyIndex) => (
+        <FunctionKey lifecycle={lifecycle} model={ui.functionKeys.byIndex(index)} title={Titles[index]}
+                     onPress={() => ui.pressFunctionKey(index)}
+                     onRelease={() => ui.releaseFunctionKey(index)}/>
+    )
     return (
         <div className={className} style={style}>
-            {key(FunctionKeyIndex.LastStep)}
             {key(FunctionKeyIndex.Scale)}
-            <span>LAST STEP</span>
-            <span>SCALE</span>
-            {key(FunctionKeyIndex.ShuffleFlam)}
             {key(FunctionKeyIndex.Clear)}
-            <span>SHUFFLE<br/>/FLAM</span>
+            <span>SCALE</span>
             <span>CLEAR</span>
-            {key(FunctionKeyIndex.InstrumentSelect)}
-            {key(FunctionKeyIndex.Shift)}
-            <span>INSTRUMENT<br/>SELECT</span>
-            <span className="shift">SHIFT</span>
         </div>
     )
 }

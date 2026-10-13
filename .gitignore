@@ -2,3 +2,6 @@
 .DS_Store
 node_modules
 dist
+build
+public/module.wasm
+dsp/assembly/samples.ts

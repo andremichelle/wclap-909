@@ -8,7 +8,7 @@ component
     padding: 0
     top: 14px
     width: 2px
-    height: 126px
+    height: 154px
     border: none
     background-color: $COLOR_DARK
     position: relative
@@ -17,17 +17,17 @@ component
     &:first-of-type
       top: 0
       margin-right: 2px
-      height: 140px
+      height: 168px
 
     &:last-of-type
       top: 0
       margin-left: 2px
-      height: 140px
+      height: 168px
 
   .instrument
     display: grid
     grid-template-columns: repeat(2, 56px)
-    grid-template-rows: 28px repeat(2, 56px)
+    grid-template-rows: 28px repeat(2, 56px) 28px
     position: relative
     align-items: center
     justify-items: center
@@ -63,3 +63,20 @@ component
       align-self: end
       grid-row: 2 / 4
       grid-column: 1 / 3
+
+    > .select
+      grid-row: 4
+      display: flex
+      flex-direction: column
+      align-items: center
+      row-gap: 3px
+      align-self: start
+
+      &.single
+        grid-column: 1 / 3
+
+      > span
+        font-size: 6px
+        font-weight: bold
+        line-height: 1em
+        color: $COLOR_DARK

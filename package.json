@@ -1,5 +1,5 @@
 {
-  "name": "tr-909",
+  "name": "wclap-909",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -8,8 +8,9 @@
     "node": ">=23"
   },
   "scripts": {
-    "dev": "vite --clearScreen false",
-    "build": "tsc && vite build",
+    "dev": "npm run build:dsp && vite --clearScreen false",
+    "build": "npm run build:dsp && tsc && vite build",
+    "build:dsp": "node scripts/build-dsp.mjs",
     "preview": "vite preview",
     "typecheck": "tsc"
   },
@@ -19,6 +20,7 @@
     "@opendaw/lib-std": "^0.0.86"
   },
   "devDependencies": {
+    "assemblyscript": "^0.28.20",
     "sass": "^1.88.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.2"
