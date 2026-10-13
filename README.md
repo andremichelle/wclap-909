@@ -1,20 +1,30 @@
-![alt screenshot](screenshot.jpg)
+![WCLAP-909 in openDAW](screenshot.jpg)
 ### Disclaimer
 _**The use of any trade name or trademark is for identification and educational purposes only and does not imply any association with the trademark holder of their product brand.**_
 
 ### WCLAP-909
 A drum machine modelled after the [Roland TR-909](https://en.wikipedia.org/wiki/Roland_TR-909) as a
-[WebCLAP](https://github.com/WebCLAP) plugin: a minimal sequencer unit that plays the ten 909 instruments. The DSP is written in AssemblyScript and compiled to a CLAP
-`module.wasm`, the panel is the plugin's webview page.
+[WebCLAP](https://github.com/WebCLAP) plugin: a minimal sequencer unit that plays the ten 909 instruments, tested in
+[openDAW](https://opendaw.studio). The DSP is written in AssemblyScript and compiled to a CLAP `module.wasm`, the panel
+is the plugin's webview page.
 
-- Select the instrument to edit with the keys below the instrument sections, then toggle its steps with the 16 step keys
-  (none → weak → full for instruments with two levels).
+#### Instruments
+- The keys below the instrument sections (BD ... RD) select the instrument the step keys edit.
+- TOTAL ACCENT sets the distance between normal and accented steps (0 to 18 dB) without changing the overall loudness.
+- Notes from the host (General MIDI drum map) play the instruments, velocities of 0.5 and above are accented.
+
+#### Sequencer
+- Click a step key: none → normal → accent → none (instruments with one level: on ↔ off).
+  Shift+click goes straight to accent, or back to none on an accented step.
+- Press a step key and drag over the others to paint them with the value it got.
 - 8 patterns of up to 64 steps, selected with the PATTERN keys. While the host plays, the selection waits for the end of
   the running pattern.
 - EDIT STEPS chooses which 16 steps the step keys show (1-16 ... 49-64). The range the pattern plays in flashes.
-- LENGTH shows the pattern length, − and + change it (hold to repeat).
-- SCALE cycles the scale, CLEAR clears the selected instrument.
-- Tempo and play/stop come from the host's transport. Notes (General MIDI drum map) play the instruments.
+- LENGTH: the display shows the pattern length, − and + change it (hold to repeat).
+- CLEAR clears the selected instrument, SCALE cycles the scale.
+- SHUFFLE switches the display and − / + to the shuffle (0 to 6), click it again for the length.
+- DOUBLE repeats the pattern once and doubles its length, COPY and PASTE copy patterns.
+- Tempo and play/stop come from the host's transport (4/4 assumed).
 
 ### Layout
 
@@ -30,7 +40,7 @@ webview channel in binary frames, see `dsp/assembly/protocol.ts`.
 ### Credits
 Thanks to [Sascha Kaltenschnee](https://soundcloud.com/cyberpvnk) for lending me his [DinSync RE-909](https://www.kumptronics.com/shop/electronic-instruments/), which is an exact hardware copy of the original [TR-909](https://en.wikipedia.org/wiki/Roland_TR-909).
 
-Logo SVGs (Roland, TR-909 & Rhythm Composer) by [Isaac Cotec](https://subaqueous.gumroad.com/l/hmOwu?recommended_by=search&_ga=2.213635036.938996232.1655202059-1482949479.1654938206&_gl=1*yr8fvz*_ga*MTQ4Mjk0OTQ3OS4xNjU0OTM4MjA2*_ga_6LJN6D94N6*MTY1NTIwMjA3My4zLjEuMTY1NTIwMjA3OC4w)
+The "-909" of the logo is from a logo SVG by [Isaac Cotec](https://subaqueous.gumroad.com/l/hmOwu), the letters are drawn after it.
 
 ### Build
 Built with [AssemblyScript](https://www.assemblyscript.org), [Vite](https://vite.dev), Sass and the openDAW UI
