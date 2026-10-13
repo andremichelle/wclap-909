@@ -1,4 +1,4 @@
-// WC-909 WebCLAP test host, audio side: runs a WebCLAP module.wasm in an AudioWorklet.
+// WCLAP-909 WebCLAP test host, audio side: runs a WebCLAP module.wasm in an AudioWorklet.
 // Adapted from the juce-webclap-plugins test host, with a transport (tempo, play/stop, song position).
 //
 // A minimal single-threaded CLAP host: notes, parameters (in and out), state, transport,
@@ -250,7 +250,7 @@ class ClapHost extends AudioWorkletProcessor {
         const host = this.alloc(48)
         const extensions = new Map()
         const ext = (name, size) => { const ptr = this.alloc(size); extensions.set(name, ptr); return ptr }
-        const strings = ["WC-909 test host", "andremichelle", "", "0.1"].map(text => this.allocString(text))
+        const strings = ["WCLAP-909 test host", "andremichelle", "", "0.1"].map(text => this.allocString(text))
         const v = this.view // after the allocations, see createProcess
         v.setUint32(host, 1, true); v.setUint32(host + 4, 2, true); v.setUint32(host + 8, 0, true)
         v.setUint32(host + 12, 0, true)

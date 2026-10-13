@@ -115,7 +115,7 @@ function sampleConfig(channel: i32, step: u8): SampleConfig {
         case Channel.TomHi: return TomHiConfig
         case Channel.Rim: return RimConfig
         case Channel.Clap: return ClapConfig
-        case Channel.Hihat: return step == Step.Extra ? OpenedHihatConfig : ClosedHihatConfig
+        case Channel.Hihat: return Step.isExtra(step) ? OpenedHihatConfig : ClosedHihatConfig
         case Channel.Crash: return CrashConfig
         default: return RideConfig
     }

@@ -13,7 +13,7 @@ import {
 import {formatValue, PARAMS, ParamId, parseValue} from "./params"
 import {hostExtension, Plugin} from "./plugin"
 
-const PLUGIN_ID = "andremichelle.wc-909"
+const PLUGIN_ID = "andremichelle.wclap-909"
 const WEBVIEW_URI = "/ui/index.html"
 const GUI_WIDTH: u32 = 1164
 const GUI_HEIGHT: u32 = 598
@@ -284,7 +284,7 @@ function createDescriptor(): usize {
     store<u32>(ptr + 4, 2)
     store<u32>(ptr + 8, 0)
     store<usize>(ptr + 12, cstring(PLUGIN_ID))
-    store<usize>(ptr + 16, cstring("WC-909"))
+    store<usize>(ptr + 16, cstring("WCLAP-909"))
     store<usize>(ptr + 20, cstring("André Michelle"))
     store<usize>(ptr + 24, cstring("https://github.com/andremichelle/tr-909"))
     store<usize>(ptr + 28, cstring(""))

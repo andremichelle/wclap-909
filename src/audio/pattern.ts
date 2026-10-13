@@ -1,7 +1,8 @@
 import {Arrays, DefaultObservableValue, int, Notifier, Observer, Subscription, Terminable, Terminator} from "@opendaw/lib-std"
 
-// 'Extra' is 'Flam' for bassdrum, snaredrum and toms or 'Open' for hihat
-export enum Step {None = 0, Weak = 1, Full = 2, Extra = 3}
+// Weak is a normal step, Full an accented one. 'Extra' is 'Flam' for bassdrum, snaredrum and toms or 'Open'
+// for hihat, ExtraAccent the same accented.
+export enum Step {None = 0, Weak = 1, Full = 2, Extra = 3, ExtraAccent = 4}
 
 export type ScaleIndex = 0 | 1 | 2 | 3
 

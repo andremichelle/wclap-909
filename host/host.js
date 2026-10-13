@@ -1,4 +1,4 @@
-// WC-909 WebCLAP test host, page side: loads a WebCLAP bundle, runs its module.wasm in an AudioWorklet
+// WCLAP-909 WebCLAP test host, page side: loads a WebCLAP bundle, runs its module.wasm in an AudioWorklet
 // (clap-host-worklet.js) and shows its webview page in an iframe, relaying messages like a real host.
 // Adapted from the juce-webclap-plugins test host: adds a transport and drum pads.
 //

@@ -15,12 +15,18 @@ export namespace Channel {
     export const Count: i32 = 10
 }
 
-// 'Extra' is 'Flam' for bassdrum, snaredrum and toms or 'Open' for hihat
+// Weak is a normal step, Full an accented one. 'Extra' is 'Flam' for bassdrum, snaredrum and toms or 'Open'
+// for hihat, ExtraAccent the same accented.
 export namespace Step {
     export const None: u8 = 0
     export const Weak: u8 = 1
     export const Full: u8 = 2
     export const Extra: u8 = 3
+    export const ExtraAccent: u8 = 4
+
+    @inline export function isAccent(step: u8): bool {return step == Full || step == ExtraAccent}
+
+    @inline export function isExtra(step: u8): bool {return step == Extra || step == ExtraAccent}
 }
 
 export const NUM_PATTERNS: i32 = 8
@@ -57,7 +63,7 @@ export class Pattern {
     // Takes a pattern sent by the page or read from state, rejecting values out of range
     read(ptr: usize): void {
         for (let i = 0; i < Layout.SIZE; i++) unchecked(this.bytes[i] = load<u8>(ptr + i))
-        for (let i = 0; i < Layout.ACCENTS; i++) if (unchecked(this.bytes[i]) > Step.Extra) unchecked(this.bytes[i] = Step.None)
+        for (let i = 0; i < Layout.ACCENTS; i++) if (unchecked(this.bytes[i]) > Step.ExtraAccent) unchecked(this.bytes[i] = Step.None)
         const lastStep = unchecked(this.bytes[Layout.LAST_STEP])
         if (lastStep < 1 || <i32>lastStep > NUM_STEPS) unchecked(this.bytes[Layout.LAST_STEP] = 16)
         if (unchecked(this.bytes[Layout.SCALE]) > 3) unchecked(this.bytes[Layout.SCALE] = 3)

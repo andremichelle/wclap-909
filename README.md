@@ -2,7 +2,7 @@
 ### Disclaimer
 _**The use of any trade name or trademark is for identification and educational purposes only and does not imply any association with the trademark holder of their product brand.**_
 
-### WC-909
+### WCLAP-909
 A drum machine modelled after the [Roland TR-909](https://en.wikipedia.org/wiki/Roland_TR-909) as a
 [WebCLAP](https://github.com/WebCLAP) plugin: a minimal sequencer unit that plays the ten 909 instruments. The DSP is written in AssemblyScript and compiled to a CLAP
 `module.wasm`, the panel is the plugin's webview page.
@@ -40,7 +40,7 @@ libraries (`@opendaw/lib-std`, `lib-dom`, `lib-jsx`).
     npm run dev        # test host on http://127.0.0.1:5909, rebuilds module.wasm when dsp/ changes
     npm run build:dsp  # only module.wasm (public/module.wasm)
     npm run build      # dsp, type-check and bundle into dist/ (dist/ is the bundle: module.wasm, ui/)
-    npm run pack       # build/wc-909.wclap.tar.gz, the bundle hosts import (openDAW: "Import WebCLAP...")
+    npm run pack       # build/wclap-909.wclap.tar.gz, the bundle hosts import (openDAW: "Import WebCLAP...")
 
 ### License
 Copyright (c) 2022 André Michelle. Licensed under the [GNU Affero General Public License v3.0 or later](LICENSE).

@@ -1,4 +1,4 @@
-// The WC-909 as a CLAP instance: voices, the pattern sequencer (driven by the host's transport) and the
+// The WCLAP-909 as a CLAP instance: voices, the pattern sequencer (driven by the host's transport) and the
 // connection to the webview page.
 
 import {AudioBuffer, Event, EventType, Host, Process, Transport} from "./clap"
@@ -170,14 +170,14 @@ export class Plugin {
     private playKey(key: i32, velocity: f64, time: i64): void {
         const channel = channelOfKey(key)
         if (channel < 0) return
-        const step = key == 46 ? Step.Extra : velocity >= 0.5 ? Step.Full : Step.Weak
-        unchecked(this.channels[channel]).schedule(this.frameIndex + time, step, this.resolveLevel(step, false))
+        const accent = velocity >= 0.5
+        const step = key == 46 ? (accent ? Step.ExtraAccent : Step.Extra) : (accent ? Step.Full : Step.Weak)
+        unchecked(this.channels[channel]).schedule(this.frameIndex + time, step, this.resolveLevel(step))
     }
 
-    // min active, half accent, full, accent + total accent
-    private resolveLevel(step: u8, totalAccent: bool): f64 {
-        let level = step == Step.Full ? 0.5 : 0.0
-        if (totalAccent) level += this.params.plain(ParamId.Accent) * 0.5
+    // Normal steps play 18 dB below full level, accented ones as loud as the TOTAL ACCENT knob says
+    private resolveLevel(step: u8): f64 {
+        const level = Step.isAccent(step) ? this.params.plain(ParamId.Accent) : 0.0
         return MIN_LEVEL - MIN_LEVEL * level
     }
 
@@ -248,14 +248,13 @@ export class Plugin {
     private playStep(pattern: Pattern, stepIndex: i32, offsetBars: f64): void {
         const frame = this.frameIndex + <i64>Math.floor(offsetBars * this.sampleRate * 240.0 / this.bpm)
         const flamFrame = frame + <i64>(pattern.flamDelay() / 1000.0 * this.sampleRate)
-        const totalAccent = pattern.isTotalAccent(stepIndex)
         for (let channel = 0; channel < Channel.Count; channel++) {
             const step = pattern.step(channel, stepIndex)
             if (step == Step.None) continue
-            const level = this.resolveLevel(step, totalAccent)
+            const level = this.resolveLevel(step)
             const player = unchecked(this.channels[channel])
             player.schedule(frame, step, level)
-            if (channel != Channel.Hihat && step == Step.Extra) player.schedule(flamFrame, step, level)
+            if (channel != Channel.Hihat && Step.isExtra(step)) player.schedule(flamFrame, step, level)
         }
         this.setStep(stepIndex)
     }

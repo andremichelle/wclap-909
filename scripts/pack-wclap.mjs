@@ -1,7 +1,7 @@
 // Builds the WebCLAP bundle and packs it into the .wclap.tar.gz hosts import (openDAW: "Import WebCLAP...").
 //
-// build/wc-909.wclap/      module.wasm, ui/index.html, assets/ (the page), LICENSE
-// build/wc-909.wclap.tar.gz
+// build/wclap-909.wclap/      module.wasm, ui/index.html, assets/ (the page), LICENSE
+// build/wclap-909.wclap.tar.gz
 //
 // The archive holds one top directory named like the bundle, plain ustar entries only (no pax headers, no macOS
 // ._ files), sorted, with fixed times and owners, so the same bundle always gives the same bytes (like
@@ -15,7 +15,7 @@ import {gzipSync} from "node:zlib"
 import {build} from "vite"
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
-const name = "wc-909.wclap"
+const name = "wclap-909.wclap"
 const bundle = join(root, "build", name)
 const output = `${bundle}.tar.gz`
 

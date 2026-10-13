@@ -74,7 +74,7 @@ export const TR909 = ({lifecycle, ui}: Construct) => {
     ), ui.pageKeys.keys.length)
     const element: HTMLDivElement = (
         <div className={className}>
-            <div className="logo wc-909"/>
+            <div className="logo wclap-909"/>
             <Instruments lifecycle={lifecycle} ui={ui} style={at(66, 108)}/>
             <div style={at(93, 321)}>
                 <LedDisplay lifecycle={lifecycle} value={ui.display}/>
