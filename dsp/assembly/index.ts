@@ -16,7 +16,7 @@ import {hostExtension, Plugin} from "./plugin"
 const PLUGIN_ID = "andremichelle.wc-909"
 const WEBVIEW_URI = "/ui/index.html"
 const GUI_WIDTH: u32 = 1164
-const GUI_HEIGHT: u32 = 626
+const GUI_HEIGHT: u32 = 598
 const PROCESS_CONTINUE: i32 = 1
 
 // Filled in at the end of the module (function indices are known only below their declarations)

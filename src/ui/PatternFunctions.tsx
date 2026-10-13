@@ -17,7 +17,7 @@ type Construct = {
 const Titles: Record<FunctionKeyIndex, string> = {
     [FunctionKeyIndex.Clear]: "Clears the selected instrument in the pattern",
     [FunctionKeyIndex.Scale]: "Cycles the scale of the pattern",
-    [FunctionKeyIndex.Shuffle]: "Hold to show the shuffle, change it with - and +",
+    [FunctionKeyIndex.Shuffle]: "Shows the shuffle on the display, - and + change it. Click again for the length.",
     [FunctionKeyIndex.Double]: "Repeats the pattern once and doubles its length (up to 64 steps)",
     [FunctionKeyIndex.Copy]: "Copies the pattern",
     [FunctionKeyIndex.Paste]: "Replaces the pattern with the copied one"

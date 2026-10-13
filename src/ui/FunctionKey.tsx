@@ -19,12 +19,20 @@ export const FunctionKey = ({lifecycle, model, onPress, onRelease, title}: Const
     const button: HTMLButtonElement = <button className={className} title={title ?? ""}/>
     lifecycle.ownAll(
         model.catchupAndSubscribe(key => LightClasses.apply(button, key)),
+        // the lamp lights while the key is down to confirm the click
         Events.subscribe(button, "pointerdown", (event: PointerEvent) => {
             button.setPointerCapture(event.pointerId)
+            button.classList.add("down")
             onPress()
         }),
-        Events.subscribe(button, "pointerup", () => onRelease?.()),
-        Events.subscribe(button, "lostpointercapture", () => onRelease?.())
+        Events.subscribe(button, "pointerup", () => {
+            button.classList.remove("down")
+            onRelease?.()
+        }),
+        Events.subscribe(button, "lostpointercapture", () => {
+            button.classList.remove("down")
+            onRelease?.()
+        })
     )
     return button
 }

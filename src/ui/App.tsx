@@ -7,7 +7,7 @@ import {TR909} from "./TR909"
 
 const className = Html.adoptStyleSheet(css, "App")
 
-const SurfaceSize = {width: 1164, height: 626}
+const SurfaceSize = {width: 1164, height: 598}
 
 type Construct = {
     lifecycle: Lifecycle

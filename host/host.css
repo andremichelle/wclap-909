@@ -28,7 +28,7 @@ main { display: flex; gap: 16px; padding: 16px; height: calc(100% - 46px); min-h
 #viewport { flex: 0 1 auto; min-height: 0; overflow: auto; border: 1px solid var(--line); background: #181818; }
 .titlebar { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: var(--panel); border: 1px solid var(--line); border-bottom: none; border-radius: 6px 6px 0 0; color: var(--muted); }
 .titlebar button { margin-left: auto; }
-iframe { display: block; border: none; background: #181818; width: 1164px; height: 626px; }
+iframe { display: block; border: none; background: #181818; width: 1164px; height: 598px; }
 
 aside { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
 aside section { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }

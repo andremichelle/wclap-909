@@ -126,8 +126,8 @@ export class UIContext implements Terminable {
                 pattern.cycleToNextScale()
                 break
             case FunctionKeyIndex.Shuffle:
-                // held: the display shows the shuffle, - and + change it
-                key.setState(KeyState.On)
+                // toggles: the display shows the shuffle, - and + change it
+                key.setState(key.state === KeyState.On ? KeyState.Off : KeyState.On)
                 this.#updateDisplay()
                 return
             case FunctionKeyIndex.Double:
@@ -135,7 +135,6 @@ export class UIContext implements Terminable {
                 break
             case FunctionKeyIndex.Copy:
                 this.#clipboard = pattern.toBytes()
-                this.functionKeys.byIndex(FunctionKeyIndex.Paste).setState(KeyState.On)
                 return
             case FunctionKeyIndex.Paste:
                 if (this.#clipboard === null) {return}
@@ -145,21 +144,14 @@ export class UIContext implements Terminable {
         this.#sendPattern(pattern)
     }
 
-    releaseFunctionKey(index: FunctionKeyIndex): void {
-        const key = this.functionKeys.byIndex(index)
-        key.setPressed(false)
-        if (index === FunctionKeyIndex.Shuffle) {
-            key.setState(KeyState.Off)
-            this.#updateDisplay()
-        }
-    }
+    releaseFunctionKey(index: FunctionKeyIndex): void {this.functionKeys.byIndex(index).setPressed(false)}
 
     selectInstrument(index: int): void {this.instrument.setValue(Instrument.All[index])}
 
-    // - and + change the length, or the shuffle while SHUFFLE is held
+    // - and + change the length, or the shuffle while SHUFFLE is on
     changeLength(delta: int): void {
         const pattern = this.activePattern()
-        if (this.#isShufflePressed()) {
+        if (this.#isShuffleOn()) {
             const shuffle = Math.max(0, Math.min(MAX_SHUFFLE, pattern.shuffleIndex.getValue() + delta))
             if (shuffle === pattern.shuffleIndex.getValue()) {return}
             pattern.shuffleIndex.setValue(shuffle)
@@ -220,11 +212,11 @@ export class UIContext implements Terminable {
         this.#updateRunningStep()
     }
 
-    #isShufflePressed(): boolean {return this.functionKeys.byIndex(FunctionKeyIndex.Shuffle).pressed}
+    #isShuffleOn(): boolean {return this.functionKeys.byIndex(FunctionKeyIndex.Shuffle).state === KeyState.On}
 
     #updateDisplay(): void {
         const pattern = this.activePattern()
-        this.display.setValue(this.#isShufflePressed() ? pattern.shuffleIndex.getValue() : pattern.lastStep.getValue())
+        this.display.setValue(this.#isShuffleOn() ? pattern.shuffleIndex.getValue() : pattern.lastStep.getValue())
     }
 
     // The steps of the edited instrument in the edit range

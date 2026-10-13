@@ -76,22 +76,22 @@ export const TR909 = ({lifecycle, ui}: Construct) => {
         <div className={className}>
             <div className="logo wc-909"/>
             <Instruments lifecycle={lifecycle} ui={ui} style={at(66, 108)}/>
-            <div style={at(66, 316)}>
+            <div style={at(78, 316)}>
                 <LedDisplay lifecycle={lifecycle} value={ui.display}/>
             </div>
-            <ActionGroup columns={2} style={at(148, 308)}>
+            <ActionGroup columns={2} style={at(160, 308)}>
                 <h1 style={{gridColumn: "1 / 3"}}>LENGTH</h1>
-                {lengthKey(0, -1, "Shortens the pattern by one step, or less shuffle while SHUFFLE is held (hold to repeat)")}
-                {lengthKey(1, 1, "Lengthens the pattern by one step, or more shuffle while SHUFFLE is held (hold to repeat)")}
+                {lengthKey(0, -1, "Shortens the pattern by one step, or less shuffle while SHUFFLE is on (hold to repeat)")}
+                {lengthKey(1, 1, "Lengthens the pattern by one step, or more shuffle while SHUFFLE is on (hold to repeat)")}
                 <span>−</span>
                 <span>+</span>
             </ActionGroup>
-            <ActionGroup columns={4} style={at(266, 308)}>
+            <ActionGroup columns={4} style={at(243, 308)}>
                 <h1 style={{gridColumn: "1 / 5"}}>EDIT STEPS</h1>
                 {pageKeys}
                 {pageKeys.map((_, index) => <span>{index * 16 + 1}-{index * 16 + 16}</span>)}
             </ActionGroup>
-            <ActionGroup columns={8} style={at(446, 308)}>
+            <ActionGroup columns={8} style={at(388, 308)}>
                 <h1 style={{gridColumn: "1 / 9"}}>PATTERN</h1>
                 {patternKeys}
                 {patternKeys.map((_, index) => <span>{index + 1}</span>)}
