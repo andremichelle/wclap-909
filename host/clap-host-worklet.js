@@ -9,7 +9,7 @@
 "use strict"
 
 const QUANTUM = 128
-const TRANSPORT_FLAGS = {HAS_TEMPO: 1, HAS_BEATS_TIMELINE: 2, HAS_SECONDS_TIMELINE: 4, IS_PLAYING: 8}
+const TRANSPORT_FLAGS = {HAS_TEMPO: 1, HAS_BEATS_TIMELINE: 2, HAS_SECONDS_TIMELINE: 4, HAS_TIME_SIGNATURE: 8, IS_PLAYING: 16}
 const TIME_FACTOR = 2147483648 // CLAP_BEATTIME_FACTOR, CLAP_SECTIME_FACTOR
 const EVENT_SLOT = 48         // bytes per input event slot (the largest event we send, clap_event_param_value)
 const MAX_EVENTS = 512
@@ -488,7 +488,8 @@ class ClapHost extends AudioWorkletProcessor {
         v.setUint32(p, 104, true)
         v.setUint16(p + 10, 9, true)
         v.setUint32(p + 16, TRANSPORT_FLAGS.HAS_TEMPO | TRANSPORT_FLAGS.HAS_BEATS_TIMELINE
-            | TRANSPORT_FLAGS.HAS_SECONDS_TIMELINE | (t.playing ? TRANSPORT_FLAGS.IS_PLAYING : 0), true)
+            | TRANSPORT_FLAGS.HAS_SECONDS_TIMELINE | TRANSPORT_FLAGS.HAS_TIME_SIGNATURE
+            | (t.playing ? TRANSPORT_FLAGS.IS_PLAYING : 0), true)
         v.setBigInt64(p + 24, BigInt(Math.round(t.beats * TIME_FACTOR)), true)
         v.setBigInt64(p + 32, BigInt(Math.round(seconds * TIME_FACTOR)), true)
         v.setFloat64(p + 40, t.bpm, true)

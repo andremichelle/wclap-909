@@ -66,7 +66,8 @@ export namespace Transport {
     export const TEMPO: u32 = 40
     export const HAS_TEMPO: u32 = 1 << 0
     export const HAS_BEATS_TIMELINE: u32 = 1 << 1
-    export const IS_PLAYING: u32 = 1 << 3
+    export const HAS_TIME_SIGNATURE: u32 = 1 << 3
+    export const IS_PLAYING: u32 = 1 << 4
     export const BEATTIME_FACTOR: f64 = 2147483648.0
 }
 
