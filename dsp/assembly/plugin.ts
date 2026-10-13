@@ -12,7 +12,8 @@ const SEND_BUFFER_SIZE: i32 = 8192
 const STATE_MAGIC: u32 = 0x39303954 // "T909"
 const STATE_VERSION: u32 = 2 // 2: 64 steps
 const STATE_HEADER: i32 = 12
-const MIN_LEVEL: f64 = -18.0
+const MAX_ACCENT: f64 = 18.0 // dB between normal and accented steps at full TOTAL ACCENT
+const ACCENT_MIDDLE: f64 = -13.5
 
 // General MIDI drum notes
 function channelOfKey(key: i32): i32 {
@@ -175,10 +176,12 @@ export class Plugin {
         unchecked(this.channels[channel]).schedule(this.frameIndex + time, step, this.resolveLevel(step))
     }
 
-    // Normal steps play 18 dB below full level, accented ones as loud as the TOTAL ACCENT knob says
+    // TOTAL ACCENT sets the distance between normal and accented steps (0...18 dB), spread evenly around a fixed
+    // middle, so turning it changes the accents, not the overall loudness. At 50% normal steps play at -18 dB and
+    // accented ones at -9 dB.
     private resolveLevel(step: u8): f64 {
-        const level = Step.isAccent(step) ? this.params.plain(ParamId.Accent) : 0.0
-        return MIN_LEVEL - MIN_LEVEL * level
+        const half = this.params.plain(ParamId.Accent) * MAX_ACCENT * 0.5
+        return Step.isAccent(step) ? ACCENT_MIDDLE + half : ACCENT_MIDDLE - half
     }
 
     // -------------------------------------------------------------------------------------------------------------
