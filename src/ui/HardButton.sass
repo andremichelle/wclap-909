@@ -1,11 +1,11 @@
 @use "sass:color"
 @use "@/ui/vars" as *
 
-$color-led-glow: color.adjust($COLOR_LED, $lightness: 25%)
-$color-top: #bebbb6
-$color-right: #a7a39d
-$color-bottom: #6d6862
-$color-left: #a7a39d
+$color-led-glow: color.adjust($COLOR_LED, $lightness: 20%)
+$color-top: #beb8b6
+$color-right: #a7a09d
+$color-bottom: #6d6562
+$color-left: #a7a09d
 
 component
   margin: 0
@@ -32,7 +32,7 @@ component
     width: 32px
     height: 32px
     border-radius: 4px
-    background: linear-gradient(#9f9d98, #a6a4a1)
+    background: linear-gradient(#9f9a98, #a6a2a1)
     position: absolute
     box-shadow: 0 0 2px 0 rgba(white, 0.2), 0 0 2px 0 rgba(white, 0.2) inset, 0 1px 1px 0 rgba(black, 0.1) inset
 
@@ -52,7 +52,7 @@ component
       height: 6px
       position: absolute
       border-radius: 1px
-      background-color: #4c3b3b
+      background-color: #384247
       box-shadow: 0 0 0.5px 1px rgba(black, 0.2) inset, 0 1px 0.5px 0 rgba(white, 0.4)
 
     &:active:after, &.pressed:after
@@ -63,5 +63,5 @@ component
       background-color: color.adjust($COLOR_LED, $lightness: -10%)
 
     &.light-on:after, .blink-phase &.light-blink:after, .flash-phase &.light-flash:after
-      background-color: $COLOR_LED
-      box-shadow: 0 0 0.5px 0.5px rgba(black, 0.2) inset, 0 1px 0.5px 0 rgba(white, 0.3), 0 -0.5px 4px 0.5px $color-led-glow
+      background: radial-gradient(ellipse at 50% 50%, color.adjust($COLOR_LED, $lightness: 22%), $COLOR_LED 70%)
+      box-shadow: 0 0 0.5px 0.5px rgba(black, 0.15) inset, 0 1px 0.5px 0 rgba(white, 0.3), 0 -0.5px 6px 1px $color-led-glow

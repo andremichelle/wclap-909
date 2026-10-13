@@ -60,7 +60,7 @@ export const LedDisplay = ({lifecycle, value}: Construct) => {
                     <feGaussianBlur stdDeviation="1"/>
                 </filter>
             </defs>
-            <rect x="0" y="0" width="96" height="70" fill="#601010"/>
+            <rect x="0" y="0" width="96" height="70" fill="#0d2435"/>
             <g filter="url(#blur-digits)">
                 {digits.map((segments, index) => <g transform={`translate(${6 + index * 46}, 6)`}>{segments}</g>)}
             </g>

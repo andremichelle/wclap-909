@@ -286,7 +286,7 @@ function createDescriptor(): usize {
     store<usize>(ptr + 12, cstring(PLUGIN_ID))
     store<usize>(ptr + 16, cstring("WCLAP-909"))
     store<usize>(ptr + 20, cstring("André Michelle"))
-    store<usize>(ptr + 24, cstring("https://github.com/andremichelle/tr-909"))
+    store<usize>(ptr + 24, cstring("https://github.com/andremichelle/wclap-909"))
     store<usize>(ptr + 28, cstring(""))
     store<usize>(ptr + 32, cstring(""))
     store<usize>(ptr + 36, cstring("0.1.0"))

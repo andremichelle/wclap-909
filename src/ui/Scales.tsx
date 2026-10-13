@@ -26,22 +26,22 @@ export const Scales = ({lifecycle, scaleIndex, style}: Construct) => {
                     <feGaussianBlur stdDeviation="1"/>
                 </filter>
                 <symbol id="note-8" width="11" height="14" viewBox="0 0 744.09 1052.4">
-                    <path fill="#d9d5d0" d={Note8}/>
+                    <path fill="#d9d2d0" d={Note8}/>
                 </symbol>
                 <symbol id="note-4" width="11" height="14" viewBox="0 0 744.09 1052.4">
-                    <path fill="#d9d5d0" d={Note4}/>
+                    <path fill="#d9d2d0" d={Note4}/>
                 </symbol>
                 <symbol id="notes-6-16">
                     {note("note-8", 32, 0)}
                     {note("note-8", 146, 0)}
                     {note("note-8", 260, 0)}
-                    <path d="M18 6.5L26 1.5H334L342 6.5" stroke="#d9d5d0" fill="none"/>
+                    <path d="M18 6.5L26 1.5H334L342 6.5" stroke="#d9d2d0" fill="none"/>
                 </symbol>
                 <symbol id="notes-3-8">
                     {note("note-8", 32, 0)}
                     {note("note-8", 89, 0)}
                     {note("note-8", 146, 0)}
-                    <path d="M18 6.5L26 1.5H164L172 6.5" stroke="#d9d5d0" fill="none"/>
+                    <path d="M18 6.5L26 1.5H164L172 6.5" stroke="#d9d2d0" fill="none"/>
                 </symbol>
                 <symbol id="notes-1-16">
                     {note("note-4", 32, 0)}
@@ -54,8 +54,8 @@ export const Scales = ({lifecycle, scaleIndex, style}: Construct) => {
                     {note("note-4", 488, 0)}
                 </symbol>
                 <symbol id="led-on">
-                    <circle cx="8" cy="6" r="4" fill="#ee3b2e"/>
-                    <circle cx="8" cy="8" r="0.75" fill="#f8aaa4"/>
+                    <circle cx="8" cy="6" r="4" fill="#42ccfa"/>
+                    <circle cx="8" cy="8" r="0.75" fill="#dbf6ff"/>
                     <circle cx="8" cy="4" r="0.75" fill="white"/>
                 </symbol>
             </defs>
@@ -88,7 +88,7 @@ export const Scales = ({lifecycle, scaleIndex, style}: Construct) => {
                 <use href="#notes-1-16" x="0" y="48"/>
             </g>
             <g>
-                {[6, 22, 38, 54].map(cy => <circle cx="8" cy={cy} r="4" fill="#1c0809"/>)}
+                {[6, 22, 38, 54].map(cy => <circle cx="8" cy={cy} r="4" fill="#08141c"/>)}
                 {indicator}
             </g>
         </svg>
