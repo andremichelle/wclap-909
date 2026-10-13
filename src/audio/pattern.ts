@@ -37,8 +37,8 @@ export class Pattern implements Terminable {
 
     readonly lastStep: DefaultObservableValue<int>
     readonly scaleIndex: DefaultObservableValue<ScaleIndex>
+    readonly shuffleIndex: DefaultObservableValue<int>
 
-    #shuffleIndex: int = 0
     #flamIndex: int = 0
     #muted: boolean = false
 
@@ -48,9 +48,11 @@ export class Pattern implements Terminable {
         this.#totalAccents = Arrays.create(() => false, NUM_STEPS)
         this.lastStep = this.#terminator.own(new DefaultObservableValue<int>(16))
         this.scaleIndex = this.#terminator.own(new DefaultObservableValue<ScaleIndex>(3))
+        this.shuffleIndex = this.#terminator.own(new DefaultObservableValue<int>(0))
         this.#terminator.ownAll(
             this.lastStep.subscribe(() => this.#notify()),
-            this.scaleIndex.subscribe(() => this.#notify())
+            this.scaleIndex.subscribe(() => this.#notify()),
+            this.shuffleIndex.subscribe(() => this.#notify())
         )
     }
 
@@ -78,13 +80,27 @@ export class Pattern implements Terminable {
 
     clearTotalAccents(): void {this.#batch(() => this.#totalAccents.fill(false))}
 
+    // Repeats the pattern once: steps 1...length are copied behind it, as far as 64 steps allow
+    double(): void {
+        const length = this.lastStep.getValue()
+        const doubled = Math.min(NUM_STEPS, length * 2)
+        if (doubled === length) {return}
+        this.#batch(() => {
+            for (let index = length; index < doubled; index++) {
+                this.#steps.forEach(steps => steps[index] = steps[index - length])
+                this.#totalAccents[index] = this.#totalAccents[index - length]
+            }
+            this.lastStep.setValue(doubled)
+        })
+    }
+
     toBytes(): Uint8Array {
         const bytes = new Uint8Array(PatternLayout.Size)
         this.#steps.forEach((steps, channel) => bytes.set(steps, PatternLayout.Steps + channel * NUM_STEPS))
         this.#totalAccents.forEach((accent, index) => bytes[PatternLayout.Accents + index] = accent ? 1 : 0)
         bytes[PatternLayout.LastStep] = this.lastStep.getValue()
         bytes[PatternLayout.Scale] = this.scaleIndex.getValue()
-        bytes[PatternLayout.Shuffle] = this.#shuffleIndex
+        bytes[PatternLayout.Shuffle] = this.shuffleIndex.getValue()
         bytes[PatternLayout.Flam] = this.#flamIndex
         return bytes
     }
@@ -102,7 +118,7 @@ export class Pattern implements Terminable {
             }
             this.lastStep.setValue(bytes[PatternLayout.LastStep])
             this.scaleIndex.setValue(bytes[PatternLayout.Scale] as ScaleIndex)
-            this.#shuffleIndex = bytes[PatternLayout.Shuffle]
+            this.shuffleIndex.setValue(bytes[PatternLayout.Shuffle])
             this.#flamIndex = bytes[PatternLayout.Flam]
         })
     }

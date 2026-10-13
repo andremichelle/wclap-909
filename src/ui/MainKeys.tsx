@@ -2,7 +2,6 @@ import css from "./MainKeys.sass?inline"
 import {Arrays, Lifecycle} from "@opendaw/lib-std"
 import {Html} from "@opendaw/lib-dom"
 import {createElement} from "@opendaw/lib-jsx"
-import {STEPS_PER_PAGE} from "@/audio/pattern"
 import {UIContext} from "@/control/context"
 import {HardButton} from "./HardButton"
 import {Labeled} from "./Labeled"
@@ -16,10 +15,9 @@ type Construct = {
 }
 
 export const MainKeys = ({lifecycle, ui, style}: Construct) => {
-    const labels: Array<HTMLElement> = []
     const pairs = Arrays.create(pair => (
         <div className="two">
-            {[pair * 2, pair * 2 + 1].map(index => labels[index] = (
+            {[pair * 2, pair * 2 + 1].map(index => (
                 <Labeled label={String(index + 1)}>
                     <HardButton lifecycle={lifecycle}
                                 kind="switch"
@@ -30,9 +28,6 @@ export const MainKeys = ({lifecycle, ui, style}: Construct) => {
             ))}
         </div>
     ), 8)
-    // the step numbers of the edit range
-    lifecycle.own(ui.editPage.catchupAndSubscribe(owner => labels.forEach((label, index) =>
-        label.dataset.label = String(owner.getValue() * STEPS_PER_PAGE + index + 1))))
     return (
         <div className={className} style={style}>
             {pairs.flatMap((pair, index) => index === 0 ? [pair] : [<hr/>, pair])}

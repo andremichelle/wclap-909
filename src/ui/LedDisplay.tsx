@@ -34,10 +34,12 @@ const Digits: ReadonlyArray<int> = [
 const LetterE = Segment.TT | Segment.BB | Segment.CR | Segment.TL | Segment.BL
 const LetterR = Segment.TT | Segment.CR | Segment.TL | Segment.BR | Segment.BL | Segment.TR
 
+const NumDigits = 2
+
 const toBits = (value: DisplayValue): ReadonlyArray<int> => {
-    if (value === "none") {return [0, 0, 0]}
-    if (value === "error") {return [LetterE, LetterR, LetterR]}
-    return Math.floor(value).toString(10).padStart(3, " ").slice(-3).split("")
+    if (value === "none") {return [0, 0]}
+    if (value === "error") {return [LetterE, LetterR]}
+    return Math.floor(value).toString(10).padStart(NumDigits, " ").slice(-NumDigits).split("")
         .map(char => char === " " || char === "-" ? 0 : Digits[parseInt(char, 10)])
 }
 
@@ -50,15 +52,15 @@ export const LedDisplay = ({lifecycle, value}: Construct) => {
     const digits: ReadonlyArray<ReadonlyArray<SVGPathElement | SVGCircleElement>> = Arrays.create(() => [
         ...SegmentPaths.map(path => <path classList="digit" d={path}/>),
         <circle classList="digit" cx="35.11" cy="54.75" r="3.11"/>
-    ], 3)
+    ], NumDigits)
     const svg: SVGSVGElement = (
-        <svg classList={className} viewBox="0 0 142 70" width="97" height="48">
+        <svg classList={className} viewBox="0 0 96 70" width="66" height="48">
             <defs>
                 <filter id="blur-digits">
                     <feGaussianBlur stdDeviation="1"/>
                 </filter>
             </defs>
-            <rect x="0" y="0" width="142" height="70" fill="#601010"/>
+            <rect x="0" y="0" width="96" height="70" fill="#601010"/>
             <g filter="url(#blur-digits)">
                 {digits.map((segments, index) => <g transform={`translate(${6 + index * 46}, 6)`}>{segments}</g>)}
             </g>

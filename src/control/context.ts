@@ -8,6 +8,8 @@ import {DisplayValue} from "./display"
 import {Instrument} from "./instrument"
 import {FunctionKeyIndex, KeyGroup, KeyState} from "./keys"
 
+const MAX_SHUFFLE = 6
+
 // The page side of the plugin: the edited pattern and instrument, the keys and their lights.
 // Patterns and parameters live in the plugin, the page keeps copies and sends every edit.
 export class UIContext implements Terminable {
@@ -26,13 +28,14 @@ export class UIContext implements Terminable {
     readonly instrument: DefaultObservableValue<Instrument>
     readonly editPattern: DefaultObservableValue<int>
     readonly editPage: DefaultObservableValue<int>
-    readonly length: DefaultObservableValue<DisplayValue>
+    readonly display: DefaultObservableValue<DisplayValue>
     readonly scaleIndex: DefaultObservableValue<ScaleIndex>
     readonly position: DefaultObservableValue<Position>
     readonly blinkPhase: DefaultObservableValue<boolean>
     readonly flashPhase: DefaultObservableValue<boolean>
 
     #remoteUpdate: boolean = false
+    #clipboard: Uint8Array | null = null
 
     constructor(connection: Connection) {
         this.#connection = connection
@@ -43,11 +46,11 @@ export class UIContext implements Terminable {
         this.patternKeys = new KeyGroup(NUM_PATTERNS)
         this.pageKeys = new KeyGroup(NUM_PAGES)
         this.lengthKeys = new KeyGroup(2)
-        this.functionKeys = new KeyGroup(FunctionKeyIndex.Clear + 1)
+        this.functionKeys = new KeyGroup(FunctionKeyIndex.Paste + 1)
         this.instrument = this.#terminator.own(new DefaultObservableValue<Instrument>(Instrument.Bassdrum))
         this.editPattern = this.#terminator.own(new DefaultObservableValue<int>(0))
         this.editPage = this.#terminator.own(new DefaultObservableValue<int>(0))
-        this.length = this.#terminator.own(new DefaultObservableValue<DisplayValue>(16))
+        this.display = this.#terminator.own(new DefaultObservableValue<DisplayValue>(16))
         this.scaleIndex = this.#terminator.own(new DefaultObservableValue<ScaleIndex>(3))
         this.position = this.#terminator.own(new DefaultObservableValue<Position>({playing: 0, queued: -1, step: -1}))
         this.blinkPhase = this.#terminator.own(new DefaultObservableValue<boolean>(false))
@@ -112,25 +115,57 @@ export class UIContext implements Terminable {
     releaseStepKey(keyIndex: int): void {this.stepKeys.byIndex(keyIndex).setPressed(false)}
 
     pressFunctionKey(index: FunctionKeyIndex): void {
-        this.functionKeys.byIndex(index).setPressed(true)
+        const key = this.functionKeys.byIndex(index)
+        key.setPressed(true)
         const pattern = this.activePattern()
         switch (index) {
+            case FunctionKeyIndex.Clear:
+                this.instrument.getValue().clear(pattern)
+                break
             case FunctionKeyIndex.Scale:
                 pattern.cycleToNextScale()
                 break
-            case FunctionKeyIndex.Clear:
-                this.instrument.getValue().clear(pattern)
+            case FunctionKeyIndex.Shuffle:
+                // held: the display shows the shuffle, - and + change it
+                key.setState(KeyState.On)
+                this.#updateDisplay()
+                return
+            case FunctionKeyIndex.Double:
+                pattern.double()
+                break
+            case FunctionKeyIndex.Copy:
+                this.#clipboard = pattern.toBytes()
+                this.functionKeys.byIndex(FunctionKeyIndex.Paste).setState(KeyState.On)
+                return
+            case FunctionKeyIndex.Paste:
+                if (this.#clipboard === null) {return}
+                pattern.fromBytes(this.#clipboard)
                 break
         }
         this.#sendPattern(pattern)
     }
 
-    releaseFunctionKey(index: FunctionKeyIndex): void {this.functionKeys.byIndex(index).setPressed(false)}
+    releaseFunctionKey(index: FunctionKeyIndex): void {
+        const key = this.functionKeys.byIndex(index)
+        key.setPressed(false)
+        if (index === FunctionKeyIndex.Shuffle) {
+            key.setState(KeyState.Off)
+            this.#updateDisplay()
+        }
+    }
 
     selectInstrument(index: int): void {this.instrument.setValue(Instrument.All[index])}
 
+    // - and + change the length, or the shuffle while SHUFFLE is held
     changeLength(delta: int): void {
         const pattern = this.activePattern()
+        if (this.#isShufflePressed()) {
+            const shuffle = Math.max(0, Math.min(MAX_SHUFFLE, pattern.shuffleIndex.getValue() + delta))
+            if (shuffle === pattern.shuffleIndex.getValue()) {return}
+            pattern.shuffleIndex.setValue(shuffle)
+            this.#sendPattern(pattern)
+            return
+        }
         const length = Math.max(1, Math.min(NUM_STEPS, pattern.lastStep.getValue() + delta))
         if (length === pattern.lastStep.getValue()) {return}
         pattern.lastStep.setValue(length)
@@ -177,10 +212,19 @@ export class UIContext implements Terminable {
         this.#patternWatch.ownAll(
             pattern.catchupAndSubscribe(() => this.#updateStepKeys()),
             pattern.scaleIndex.catchupAndSubscribe(owner => this.scaleIndex.setValue(owner.getValue())),
-            pattern.lastStep.catchupAndSubscribe(owner => this.length.setValue(owner.getValue()))
+            pattern.lastStep.subscribe(() => this.#updateDisplay()),
+            pattern.shuffleIndex.subscribe(() => this.#updateDisplay())
         )
+        this.#updateDisplay()
         this.#updatePatternKeys()
         this.#updateRunningStep()
+    }
+
+    #isShufflePressed(): boolean {return this.functionKeys.byIndex(FunctionKeyIndex.Shuffle).pressed}
+
+    #updateDisplay(): void {
+        const pattern = this.activePattern()
+        this.display.setValue(this.#isShufflePressed() ? pattern.shuffleIndex.getValue() : pattern.lastStep.getValue())
     }
 
     // The steps of the edited instrument in the edit range

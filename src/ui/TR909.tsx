@@ -77,21 +77,21 @@ export const TR909 = ({lifecycle, ui}: Construct) => {
             <div className="logo wc-909"/>
             <Instruments lifecycle={lifecycle} ui={ui} style={at(66, 108)}/>
             <div style={at(66, 316)}>
-                <LedDisplay lifecycle={lifecycle} value={ui.length}/>
+                <LedDisplay lifecycle={lifecycle} value={ui.display}/>
             </div>
-            <ActionGroup columns={2} style={at(179, 308)}>
+            <ActionGroup columns={2} style={at(148, 308)}>
                 <h1 style={{gridColumn: "1 / 3"}}>LENGTH</h1>
-                {lengthKey(0, -1, "Shortens the pattern by one step (hold to repeat)")}
-                {lengthKey(1, 1, "Lengthens the pattern by one step (hold to repeat)")}
+                {lengthKey(0, -1, "Shortens the pattern by one step, or less shuffle while SHUFFLE is held (hold to repeat)")}
+                {lengthKey(1, 1, "Lengthens the pattern by one step, or more shuffle while SHUFFLE is held (hold to repeat)")}
                 <span>−</span>
                 <span>+</span>
             </ActionGroup>
-            <ActionGroup columns={4} style={at(297, 308)}>
+            <ActionGroup columns={4} style={at(266, 308)}>
                 <h1 style={{gridColumn: "1 / 5"}}>EDIT STEPS</h1>
                 {pageKeys}
                 {pageKeys.map((_, index) => <span>{index * 16 + 1}-{index * 16 + 16}</span>)}
             </ActionGroup>
-            <ActionGroup columns={8} style={at(477, 308)}>
+            <ActionGroup columns={8} style={at(446, 308)}>
                 <h1 style={{gridColumn: "1 / 9"}}>PATTERN</h1>
                 {patternKeys}
                 {patternKeys.map((_, index) => <span>{index + 1}</span>)}
@@ -100,8 +100,6 @@ export const TR909 = ({lifecycle, ui}: Construct) => {
             <Scales lifecycle={lifecycle} scaleIndex={ui.scaleIndex} style={at(174, 396)}/>
             <MainKeys lifecycle={lifecycle} ui={ui} style={at(188, 480)}/>
             <hr className="bottom-right" style={at(1096, 396)}/>
-            <hr className="main-border" style={{...at(206, 462), width: "354px"}}/>
-            <hr className="main-border" style={{...at(664, 462), width: "408px"}}/>
             <Knob lifecycle={lifecycle} parameter={preset.volume} label="VOLUME" big units={["MIN", "MAX"]}
                   onGestureBegin={() => ui.beginGesture(preset.volume)}
                   onGestureEnd={() => ui.endGesture(preset.volume)}

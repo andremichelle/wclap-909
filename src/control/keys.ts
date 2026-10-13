@@ -1,6 +1,6 @@
 import {int, Notifier, Observer, Subscription} from "@opendaw/lib-std"
 
-export enum FunctionKeyIndex {Scale, Clear}
+export enum FunctionKeyIndex {Clear, Scale, Shuffle, Double, Copy, Paste}
 
 export enum KeyState {Off, Flash, Blink, On}
 

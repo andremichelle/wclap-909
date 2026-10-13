@@ -15,8 +15,12 @@ type Construct = {
 }
 
 const Titles: Record<FunctionKeyIndex, string> = {
+    [FunctionKeyIndex.Clear]: "Clears the selected instrument in the pattern",
     [FunctionKeyIndex.Scale]: "Cycles the scale of the pattern",
-    [FunctionKeyIndex.Clear]: "Clears the selected instrument in the pattern"
+    [FunctionKeyIndex.Shuffle]: "Hold to show the shuffle, change it with - and +",
+    [FunctionKeyIndex.Double]: "Repeats the pattern once and doubles its length (up to 64 steps)",
+    [FunctionKeyIndex.Copy]: "Copies the pattern",
+    [FunctionKeyIndex.Paste]: "Replaces the pattern with the copied one"
 }
 
 export const PatternFunctions = ({lifecycle, ui, style}: Construct) => {
@@ -27,10 +31,18 @@ export const PatternFunctions = ({lifecycle, ui, style}: Construct) => {
     )
     return (
         <div className={className} style={style}>
-            {key(FunctionKeyIndex.Scale)}
             {key(FunctionKeyIndex.Clear)}
-            <span>SCALE</span>
+            {key(FunctionKeyIndex.Scale)}
             <span>CLEAR</span>
+            <span>SCALE</span>
+            {key(FunctionKeyIndex.Shuffle)}
+            {key(FunctionKeyIndex.Double)}
+            <span>SHUFFLE</span>
+            <span>DOUBLE</span>
+            {key(FunctionKeyIndex.Copy)}
+            {key(FunctionKeyIndex.Paste)}
+            <span>COPY</span>
+            <span>PASTE</span>
         </div>
     )
 }
