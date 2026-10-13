@@ -1,6 +1,6 @@
 import {Arrays, DefaultObservableValue, DefaultParameter, int, Terminable, Terminator} from "@opendaw/lib-std"
 import {AnimationFrame} from "@opendaw/lib-dom"
-import {NUM_PAGES, NUM_PATTERNS, NUM_STEPS, Pattern, ScaleIndex, STEPS_PER_PAGE} from "@/audio/pattern"
+import {NUM_PAGES, NUM_PATTERNS, NUM_STEPS, Pattern, ScaleIndex, Step, STEPS_PER_PAGE} from "@/audio/pattern"
 import {Preset} from "@/audio/preset"
 import {Connection} from "@/plugin/connection"
 import {Frames, Position, Snapshot} from "@/plugin/protocol"
@@ -35,6 +35,7 @@ export class UIContext implements Terminable {
     readonly flashPhase: DefaultObservableValue<boolean>
 
     #remoteUpdate: boolean = false
+    #paintValue: Step = Step.None
     #clipboard: Uint8Array | null = null
 
     constructor(connection: Connection) {
@@ -109,6 +110,14 @@ export class UIContext implements Terminable {
         } else {
             instrument.toggleStep(pattern, stepIndex)
         }
+        this.#paintValue = instrument.value(pattern, stepIndex)
+        this.#sendPattern(pattern)
+    }
+
+    // Dragging over further step keys gives them the value the pressed key got
+    paintStepKey(keyIndex: int): void {
+        const pattern = this.activePattern()
+        this.instrument.getValue().paint(pattern, this.editPage.getValue() * STEPS_PER_PAGE + keyIndex, this.#paintValue)
         this.#sendPattern(pattern)
     }
 

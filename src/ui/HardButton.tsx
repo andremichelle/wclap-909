@@ -14,15 +14,16 @@ type Construct = {
     model?: Key
     onPress: (event: PointerEvent) => void
     onRelease?: Exec
+    capture?: boolean
 }
 
-export const HardButton = ({lifecycle, kind, bright, model, onPress, onRelease}: Construct) => {
+export const HardButton = ({lifecycle, kind, bright, model, onPress, onRelease, capture = true}: Construct) => {
     const button: HTMLButtonElement = (
         <button className={Html.buildClassList(className, kind, bright === true && "bright")}/>
     )
     lifecycle.ownAll(
         Events.subscribe(button, "pointerdown", (event: PointerEvent) => {
-            button.setPointerCapture(event.pointerId)
+            if (capture) {button.setPointerCapture(event.pointerId)}
             onPress(event)
         }),
         Events.subscribe(button, "pointerup", () => onRelease?.()),

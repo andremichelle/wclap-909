@@ -57,6 +57,17 @@ export class Instrument {
         pattern.setStep(channelIndex, stepIndex, pattern.getStep(channelIndex, stepIndex) === Step.Full ? Step.None : Step.Full)
     }
 
+    value(pattern: Pattern, stepIndex: int): Step {return pattern.getStep(this.channelIndex, stepIndex)}
+
+    // Sets the step to a value taken from another step (drag painting). Painting 'off' on the hi-hat
+    // only removes the selected kind, closed or open.
+    paint(pattern: Pattern, stepIndex: int, value: Step): void {
+        const channelIndex = this.channelIndex
+        if (value === Step.None && channelIndex === ChannelIndex.Hihat
+            && (pattern.getStep(channelIndex, stepIndex) === Step.Extra) !== (this.editing === "extra")) {return}
+        pattern.setStep(channelIndex, stepIndex, value)
+    }
+
     clear(pattern: Pattern): void {
         const channelIndex = this.channelIndex
         if (channelIndex === ChannelIndex.Hihat) {

@@ -76,26 +76,27 @@ export const TR909 = ({lifecycle, ui}: Construct) => {
         <div className={className}>
             <div className="logo wc-909"/>
             <Instruments lifecycle={lifecycle} ui={ui} style={at(66, 108)}/>
-            <div style={at(78, 316)}>
+            <div style={at(93, 321)}>
                 <LedDisplay lifecycle={lifecycle} value={ui.display}/>
             </div>
-            <ActionGroup columns={2} style={at(160, 308)}>
+            <ActionGroup columns={2} style={at(183, 304)}>
                 <h1 style={{gridColumn: "1 / 3"}}>LENGTH</h1>
                 {lengthKey(0, -1, "Shortens the pattern by one step, or less shuffle while SHUFFLE is on (hold to repeat)")}
                 {lengthKey(1, 1, "Lengthens the pattern by one step, or more shuffle while SHUFFLE is on (hold to repeat)")}
                 <span>−</span>
                 <span>+</span>
             </ActionGroup>
-            <ActionGroup columns={4} style={at(243, 308)}>
+            <ActionGroup columns={4} style={at(266, 304)}>
                 <h1 style={{gridColumn: "1 / 5"}}>EDIT STEPS</h1>
                 {pageKeys}
                 {pageKeys.map((_, index) => <span>{index * 16 + 1}-{index * 16 + 16}</span>)}
             </ActionGroup>
-            <ActionGroup columns={8} style={at(388, 308)}>
+            <ActionGroup columns={8} style={at(411, 304)}>
                 <h1 style={{gridColumn: "1 / 9"}}>PATTERN</h1>
                 {patternKeys}
                 {patternKeys.map((_, index) => <span>{index + 1}</span>)}
             </ActionGroup>
+            <h2 className="sequencer" style={{...at(183, 364), width: "465px"}}>SEQUENCER</h2>
             <PatternFunctions lifecycle={lifecycle} ui={ui} style={at(66, 396)}/>
             <Scales lifecycle={lifecycle} scaleIndex={ui.scaleIndex} style={at(174, 396)}/>
             <MainKeys lifecycle={lifecycle} ui={ui} style={at(188, 480)}/>
