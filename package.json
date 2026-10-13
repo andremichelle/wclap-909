@@ -12,7 +12,8 @@
     "build": "npm run build:dsp && tsc && vite build",
     "build:dsp": "node scripts/build-dsp.mjs",
     "preview": "vite preview",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "pack": "node scripts/pack-wclap.mjs"
   },
   "dependencies": {
     "@opendaw/lib-dom": "^0.0.91",

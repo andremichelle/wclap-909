@@ -40,6 +40,7 @@ libraries (`@opendaw/lib-std`, `lib-dom`, `lib-jsx`).
     npm run dev        # test host on http://127.0.0.1:5909, rebuilds module.wasm when dsp/ changes
     npm run build:dsp  # only module.wasm (public/module.wasm)
     npm run build      # dsp, type-check and bundle into dist/ (dist/ is the bundle: module.wasm, ui/)
+    npm run pack       # build/wc-909.wclap.tar.gz, the bundle hosts import (openDAW: "Import WebCLAP...")
 
 ### License
 Copyright (c) 2022 André Michelle. Licensed under the [GNU Affero General Public License v3.0 or later](LICENSE).
